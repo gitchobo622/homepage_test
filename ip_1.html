@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Local IP Address</title>
+</head>
+<body>
+    <p id="localIP">Your Local IP Address: Loading...</p>
+
+    <script>
+        // 로컬 IP 주소를 가져오는 함수
+        function getLocalIPAddress() {
+            // WebRTC를 사용하여 로컬 IP 주소를 가져옴
+            const pc = new RTCPeerConnection();
+            pc.createDataChannel('');
+            pc.createOffer().then(function(offer) {
+                pc.setLocalDescription(offer);
+            });
+            pc.onicecandidate = function(e) {
+                if (e.candidate) {
+                    const localIP = e.candidate.address;
+                    document.getElementById('localIP').innerText = `Your Local IP Address: ${localIP}`;
+                    pc.onicecandidate = null; // 이벤트 리스너 제거
+                }
+            };
+        }
+
+        // 페이지가 로드될 때 자동으로 실행되는 함수
+        window.onload = function() {
+            // 로컬 IP 주소를 가져와 화면에 출력
+            getLocalIPAddress();
+        };
+    </script>
+</body>
+</html>
